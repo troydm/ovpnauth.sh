@@ -1,0 +1,37 @@
+OpenVPN sh authentication script with simple user db
+for use withauth-user-pass-verify via-file option
+
+It's a simple sh shell script that is target at consumer routers that dont't
+have perl or any other scripting languages installed on them, 
+but need a simple ovpn authentication
+
+LICENSE
+-----------------------------------
+NONE
+
+INSTALL
+------------------------------------
+1) copy ovpnauth.sh script to your server, 
+make it executable (chmod +x) and make sure you can execute it
+
+2) create a file named ovpnauth.conf and put it inside for example
+	/usr/local/etc/
+
+3) for each user you want to register
+	3a) compute md5 checksum using this ovpnauth.sh md5 password
+	3b) add line in your ovpnauth.conf that reads like this:
+		username=[computed-md5-password]
+	    where [computed-md5-password] is md5 checksum you computed 
+
+4) edit ovpnauth.sh and make sure your conf path (path to ovpnauth.conf) is correct
+	4a) (optional) you can change your logfile path
+
+5) now in your openvpn.conf add this options
+	script-security 2 
+	auth-user-pass-verify ovpnauth.sh via-file
+   also you can replace ovpnauth.sh with full path to your ovpnauth script
+
+6) Enjoy sh shell based OpenVPN authentication
+ 	and don't forget to specify auth-user-pass option in 
+	your openvpn client config
+ 
