@@ -14,7 +14,7 @@ then
 	echo ""
 	echo "help - prints help"
 	echo "md5 password - to compute password md5 checksum"
-	return 1
+	exit 1
 fi
 
 md5(){
@@ -27,7 +27,7 @@ md5(){
 if [ "$1" = "md5" ]
 then
         echo `md5 $2`
-	return 1
+	exit 1
 fi
 
 log(){
@@ -52,10 +52,10 @@ if [ "$password" = "$userpass" ]
 then
 	log "OpenVPN authentication successfull: $username"
 	logenv
-	return 0
+	exit 0
 fi
 
 log "OpenVPN authentication failed"
 log `cat $1`
 logenv
-return 1
+exit 1
