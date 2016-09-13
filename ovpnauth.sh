@@ -2,8 +2,8 @@
 
 # Config parameters
 
-conf="/usr/local/etc/ovpnauth.conf"
-logfile="/var/log/ovpnauth.log"
+conf="/jffs/ovpnauth.conf"
+logfile="/opt/ovpnauth.log"
 
 # End of config parameters
 
@@ -17,12 +17,16 @@ then
 	exit 1
 fi
 
-md5(){
-        echo "$1.`uname -n`" > /tmp/$$.md5calc
-        sum="`md5sum /tmp/$$.md5calc | awk '{print $1}'`"
-        rm /tmp/$$.md5calc
+md5(){        
+        sum="`echo "$1" | md5sum | awk '{print $1}'`"
         echo "$sum"
 }
+
+md5_nl(){        
+        sum="`echo -n "$1" | md5sum | awk '{print $1}'`"
+        echo "$sum"
+}
+
 
 if [ "$1" = "md5" ]
 then
@@ -45,10 +49,12 @@ username=`echo $userpass | awk '{print $1}'`
 password=`echo $userpass | awk '{print $2}'`
 
 # computing password md5
-password=`md5 $password`
+thehash=`md5 $password`
+thehash_no_newline=`md5_nl $password`
+
 userpass=`cat $conf | grep $username= | awk -F= '{print $2}'`
 
-if [ "$password" = "$userpass" ] 
+if [ \( "$thehash" = "$userpass" \) -o \( "$thehash_no_newline" = "$userpass" \) ] 
 then
 	log "OpenVPN authentication successfull: $username"
 	logenv
