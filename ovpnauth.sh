@@ -38,16 +38,8 @@ logenv(){
 	enviroment="`env | awk '{printf "%s ", $0}'`"
 	echo "`date +'%m/%d/%y %H:%M'` - $enviroment" >> $logfile
 }
-
-envr="`echo `env``"
-userpass=`cat $1`
-username=`echo $userpass | awk '{print $1}'`
-password=`echo $userpass | awk '{print $2}'`
-
-# computing password md5
-password=`md5 $password`
-userpass=`cat $conf | grep $username= | awk -F= '{print $2}'`
-
+password=`md5 $2`
+userpass=`cat $conf | grep ^$1= | awk -F= '{print $2}'`
 if [ "$password" = "$userpass" ] 
 then
 	log "OpenVPN authentication successfull: $username"
@@ -55,7 +47,6 @@ then
 	exit 0
 fi
 
-log "OpenVPN authentication failed"
-log `cat $1`
+log "OpenVPN authentication failed: $username"
 logenv
 exit 1
